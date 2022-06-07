@@ -131,37 +131,12 @@ def calc_score(state):
 
 # RETURNS SCORE FOR END POSITION FOR BOTH PLAYERS IN FORMAT [SCORE PLAYER -1, SCORE PLAYER 1]
 def eval_end_pos(env):
-    # # print(env.base_env.action_size)
-    # # print(env[1])
-    # print(type(env))
-    # # env.base_env.get_state_from_player_perspective()
-    # # env.base_env.print_board_to_console(env)
-    # print(env._get_current_obs)
-
-    # player_id = list(obs.keys())[0]
-    
-    # print(player_id)
-    # action_mask = obs[player_id]["partial_observation"]
-    # print(len(action_mask), len(action_mask[0]), len(action_mask[0][0]))
-    # print(env._get_current_obs(player=1))
-    # print(env._get_current_obs(player=-1))
-    # action_mask_1 = env._get_current_obs(player=1)["partial_observation"]
-    # action_mask_2 = env._get_current_obs(player=-1)["partial_observation"]
-    # print(action_mask_1[:][:][0])
-    # state = env.state
 
     player_id = -1
     player_state = env.base_env.get_state_from_player_perspective(env.state, player_id)
     opp_state = env.base_env.get_state_from_player_perspective(env.state, -player_id)
-    # full_obs = env.base_env.get_fully_observable_observation(env.state, player_id)
-
-    # print(env.state)
-    # print(np.shape(env.state))
-    # print(player_state[0])
-
-    # FIRST CALCULATE SCORE FOR PLAYER -1
-    
-    return([calc_score(player_state[0]), calc_score(opp_state[0])])
+       
+    return([calc_score(player_state), calc_score(opp_state)])
             
             
             
