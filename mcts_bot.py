@@ -6,6 +6,7 @@ import numpy as np
 from scorer import step_score
 from rnd_bot import random_act
 
+from stratego_env import StrategoMultiAgentEnv
 
 # hyperparameters
 global depth, epsilon, min_budget, max_pool, C
@@ -115,7 +116,7 @@ def _backpropagation(obs_pre, obs_curr, node, player_id):
     node.visit(score)
 
 
-def mcts_act(env, obs):
+def mcts_act(config, env, obs):
     '''
     Use MCTS to select an action.
     '''
@@ -143,9 +144,21 @@ def mcts_act(env, obs):
             child_node = _selection(root_node)
         else:
             child_node = _expansion(root_node)
-        game_copy = copy.deepcopy(env)
+        game_copy = copy_env(config, env)
         obs_curr, rew, done = _simulation(game_copy, child_node, player_id)
         _backpropagation(obs, obs_curr, child_node, player_id)
     # return action with highest UCB score
     res = _selection(root_node)
     return res.action
+
+
+def copy_env(config, env):
+    config['vs_human'] = False
+    copied = StrategoMultiAgentEnv(env_config=config)
+    copied.player = copy.deepcopy(env.player)
+    copied.state = copy.deepcopy(env.state)
+    if env.__dict__.__contains__('player_map'):
+        copied.player_map = copy.deepcopy(env.player_map)
+    if env.__dict__.__contains__('reverse_player_map'):
+        copied.reverse_player_map = copy.deepcopy(env.reverse_player_map)
+    return copied
