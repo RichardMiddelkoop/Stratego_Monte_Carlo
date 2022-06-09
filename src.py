@@ -24,6 +24,7 @@ if __name__ == '__main__':
     for _ in range(number_of_games):
         print("New Game Started")
         obs = env.reset()
+        save_state(env.state, "start_test.pickle")
         while True:
             assert len(obs.keys()) == 1
             current_player = list(obs.keys())[0]
