@@ -129,13 +129,14 @@ def calc_score(state):
                 score += i
     return score
 
-# RETURNS SCORE FOR END POSITION FOR BOTH PLAYERS IN FORMAT [SCORE PLAYER -1, SCORE PLAYER 1]
+# RETURNS SCORE FOR END POSITION FOR BOTH PLAYERS IN FORMAT [SCORE PLAYER 1, SCORE PLAYER -1]
 def eval_end_pos(env):
 
-    player_id = -1
+    player_id = 1
     player_state = env.base_env.get_state_from_player_perspective(env.state, player_id)
     opp_state = env.base_env.get_state_from_player_perspective(env.state, -player_id)
-       
+
+    env.base_env.print_board_to_console(env.state)
     return([calc_score(player_state), calc_score(opp_state)])
             
             
