@@ -6,7 +6,7 @@ from stratego_env import StrategoMultiAgentEnv, ObservationModes, GameVersions
 from evaluate_board import eval_end_pos
 from save_load import load_state, save_state
 
-if __name__ == '__main__':
+def mcGame():
     config = {
         'version': GameVersions.STANDARD,
         'random_player_assignment': False,
@@ -35,13 +35,13 @@ if __name__ == '__main__':
             if current_player == 1:
                 current_player_action = mcts_act(config, env, obs)
             else:
-                current_player_action = random_act(obs)
+                current_player_action = mcts_act(config, env, obs)
 
             obs, rew, done, info = env.step(
                 action_dict={current_player: current_player_action})
             
-            if(print_board):
-                print(f"Player {current_player} made move {current_player_action}")
+            # if(print_board):
+            # print(f"Player {current_player} made move {current_player_action}")
             
             # print((obs["partial_observation"]))
             # time.sleep(599)
@@ -60,3 +60,7 @@ if __name__ == '__main__':
             else:
                 assert all(r == 0.0 for r in rew.values())
     print(wons)
+    if(wons[0] == 1):
+        return 1
+    else:
+        return -1

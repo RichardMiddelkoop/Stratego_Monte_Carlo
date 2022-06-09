@@ -3,7 +3,7 @@ from stratego_env import StrategoMultiAgentEnv, ObservationModes, GameVersions
 
 
 
-if __name__ == '__main__':
+def pve(human_player_num):
     config = {
         'version': GameVersions.STANDARD,
         'random_player_assignment': False,
@@ -11,7 +11,7 @@ if __name__ == '__main__':
         'observation_mode': ObservationModes.PARTIALLY_OBSERVABLE,
 
         'vs_human': True,  # one of the players is a human using a web gui
-        'human_player_num': -1,  # 1 or -1
+        'human_player_num': human_player_num,  # 1 or -1
         'human_web_gui_port': 7000,
     }
 
@@ -43,3 +43,7 @@ if __name__ == '__main__':
                 break
             else:
                 assert all(r == 0.0 for r in rew.values())
+    if(rew[env_agent_player_num] > 0.5):
+        return -1
+    else:
+        return 1

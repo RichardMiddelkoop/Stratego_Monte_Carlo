@@ -1,14 +1,44 @@
 import argparse
+from pve import pve
+from pvp_2 import pvp
+from src import mcGame
 
 # TODO make an actual function which plays the games.
 def playGame(player1, player2, score, startingDifference):
-    score[0] += 1
+    # score[0] += 1
+    if(player1 != "human" and player2 == "human"):
+        temp = pve(1)
+        if(temp == 1):
+            score[0] += 1
+        elif(temp == -1):
+            score[1] += 1
+        return score
+    elif(player1 == "human" and player2 != "human"):
+        temp = pve(-1)
+        if(temp == 1):
+            score[0] += 1
+        elif(temp == -1):
+            score[1] += 1
+    elif(player1 == "human" and player2 == "human"):
+        temp = pvp()
+        if(temp == 1):
+            score[0] += 1
+        elif(temp == -1):
+            score[1] += 1
+    else:
+        temp = mcGame()
+        if(temp == 1):
+            score[0] += 1
+        elif(temp == -1):
+            score[1] += 1
+
     return score
 
 def startGame(player1, player2, nrOfGames, comeback, score=[0,0]):
     
     # The checks if a player has won the entire section
-    if nrOfGames == "bo3" and max(score) >= 3:
+    if nrOfGames == "bo3" and max(score) >= 2:
+        
         if score.index(max(score)) == 0:
             print("player1: {} has won with score {}-{}, exiting the program".format(player1, score[0], score[1]))
             return
@@ -16,7 +46,7 @@ def startGame(player1, player2, nrOfGames, comeback, score=[0,0]):
             print("player2: {} has won with score {}-{}, exiting the program".format(player2, score[0], score[1]))
             return
 
-    if nrOfGames == "bo5" and max(score) >= 5:
+    if nrOfGames == "bo5" and max(score) >= 3:
         if score.index(max(score)) == 0:
             print("player1: {} has won with score {}-{}, exiting the program".format(player1, score[0], score[1]))
             return
@@ -45,7 +75,7 @@ def startGame(player1, player2, nrOfGames, comeback, score=[0,0]):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-M","--mode", default="", help="Would you like to play player versus player or player versus bot?, options are pvp or pvb")
+    parser.add_argument("-M","--mode", default="", help="Would you like to play player versus player or player versus bot?, options are pvp or pve")
     parser.add_argument("-B","--bot", default="", help="Against what bot would you like to play?, options are easy or hard")
     parser.add_argument("-N","--nrofgames", default="", help="How many games would you like to play?, options are bo3, bo5 or freeplay")
     parser.add_argument("-C","--comeback", action="store_true", help="Adding this option turns on the comeback mechanic between the rounds")
@@ -55,14 +85,17 @@ if __name__ == '__main__':
     player2 = args.bot
     nrofgames = args.nrofgames
     useComeback = args.comeback
-    while not (test == "pvp" or test == "pvb"):
-        print("Would you like to play player versus player or player versus bot?") 
-        test = input("Enter pvp or pvb: ")
+    while not (test == "pvp" or test == "pve" or test == "eve"):
+        print("Would you like to play player versus player or player versus bot or watch two bots compete?") 
+        test = input("Enter pvp or pve or eve: ")
 
-    if test == "pvb":
+    if test == "pve":
         while not (player2 == "hardBot" or player2 == "easyBot"): 
             print("Against what bot would you like to play?")
             player2 = input("Enter hard or easy: ") + "Bot"
+    elif test == "eve":
+        player1 = "easyBot"
+        player2 = "easyBot"
     else:
         player2 = "human"
 
@@ -70,6 +103,7 @@ if __name__ == '__main__':
         print("How many games would you like to play?")
         print("The options are best of 3, best of 5 or freeplay")
         nrofgames = input("Enter bo3, bo5 or freeplay: ")
+
     if not useComeback:
         print("Do you want to include a comeback mechanic between the rounds?")
         temp = ""
@@ -79,7 +113,7 @@ if __name__ == '__main__':
 
     # The parameters are:
     ## player1 = "hardBot" if testing else "human" 
-    ## player2 = "human" if "pvb" else "hardBot" or "easyBot"
+    ## player2 = "human" if "pve" else "hardBot" or "easyBot"
     ## nrOfGames: nr of rounds to be played
     ## useComeback: whenether the comeback mechanic is active or not
     player1 = "hardBot" if args.testing else "human" 
