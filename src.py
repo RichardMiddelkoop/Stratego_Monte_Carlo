@@ -30,7 +30,7 @@ if __name__ == '__main__':
                 env.base_env.print_board_to_console(env.state)
 
             if current_player == 1:
-                current_player_action = mcts_act(env, obs)
+                current_player_action = mcts_act(config, env, obs)
             else:
                 current_player_action = random_act(obs)
 
