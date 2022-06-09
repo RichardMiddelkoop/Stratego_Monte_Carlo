@@ -10,7 +10,7 @@ from stratego_env import StrategoMultiAgentEnv
 
 # hyperparameters
 global depth, epsilon, min_budget, max_pool, C
-depth = 1
+depth = 3
 epsilon = 0.3
 min_budget = 20
 max_pool = 40

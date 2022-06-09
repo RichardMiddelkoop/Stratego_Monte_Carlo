@@ -10,7 +10,7 @@ from save_load import save_env
 if __name__ == '__main__':
     config = {
         'version': GameVersions.STANDARD,
-        'random_player_assignment': True,
+        'random_player_assignment': False,
         'human_inits': True,
         'observation_mode': ObservationModes.PARTIALLY_OBSERVABLE,
     }
