@@ -4,17 +4,19 @@ from mcts_bot import mcts_act
 from rnd_bot import random_act
 from stratego_env import StrategoMultiAgentEnv, ObservationModes, GameVersions
 from evaluate_board import eval_end_pos
-from save_load import save_env
-
+from save_load import load_state, save_state
 
 if __name__ == '__main__':
     config = {
         'version': GameVersions.STANDARD,
-        'random_player_assignment': True,
+        'random_player_assignment': False,
         'human_inits': True,
         'observation_mode': ObservationModes.PARTIALLY_OBSERVABLE,
     }
     print_board = False
+
+    
+
     env = StrategoMultiAgentEnv(env_config=config)
 
     number_of_games = 1
@@ -47,7 +49,7 @@ if __name__ == '__main__':
                 print(
                     f"Game Finished, player 1 rew: {rew[1]}, player -1 rew: {rew[-1]}")
                 scores = eval_end_pos(env)
-                save_env(env.state, "test.pickle")
+                save_state(env.state, "test.pickle")
                 print(scores)
                 if rew[1] == 1.0:
                     wons[0] += 1

@@ -138,6 +138,7 @@ def eval_end_pos(env):
 
     env.base_env.print_board_to_console(env.state)
     return([calc_score(player_state), calc_score(opp_state)])
+
             
             
             
