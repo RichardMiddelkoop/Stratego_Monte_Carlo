@@ -116,11 +116,9 @@ def calc_score(state):
             elif(i == SPY):
                 score += 10
             elif(i == SCOUT):
-                score += 8
+                score += 3
             elif(i == MINER):
                 score += 5
-            elif(i == SCOUT):
-                score += 8
             elif(i == GENERAL):
                 score += 12
             elif(i == MARSHALL):
@@ -137,8 +135,11 @@ def eval_end_pos(env):
     opp_state = env.base_env.get_state_from_player_perspective(env.state, -player_id)
 
     env.base_env.print_board_to_console(env.state)
-    return([calc_score(player_state), calc_score(opp_state)])
-
-            
-            
-            
+    scores = [calc_score(player_state), calc_score(opp_state)]
+    if(scores[0] > scores[1]):
+        scores[1] = scores[1]/scores[0]
+        scores[0] = 1
+    else:
+        scores[0] = scores[0]/scores[1]
+        scores[1] = 1
+    return(scores)
