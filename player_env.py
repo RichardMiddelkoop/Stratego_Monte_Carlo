@@ -1,32 +1,77 @@
 import argparse
+from math import inf
 from pve import pve
 from pvp_2 import pvp
 from src import mcGame
+from stratego_env import StrategoMultiAgentEnv, ObservationModes, GameVersions
+from evaluate_board import eval_end_pos
+import numpy as np
 
 # TODO make an actual function which plays the games.
 def playGame(player1, player2, score, startingDifference):
-    # score[0] += 1
+    config = {
+        'version': GameVersions.STANDARD,
+        'random_player_assignment': False,
+        'human_inits': True,
+        'observation_mode': ObservationModes.PARTIALLY_OBSERVABLE,
+    }
+    
+
+    closest_score = -inf
+    best_env = None
+    print("Creating boards for comeback score, this may take a while...")
+    for i in range(5):
+        print(f"Calculating {i} out of 5")
+        env = StrategoMultiAgentEnv(env_config=config)
+        obs = env.reset()
+        save_env = env
+        save_obs = obs
+        end_board_scores = [[0],[0]]
+        avg_games = 2
+        winner = 0
+        for i in range(avg_games):
+            
+            env = save_env
+            env.base_env.print_board_to_console(env.state)
+            # obs = env.reset()
+
+            env.base_env.print_board_to_console(env.state)
+            obs = save_obs
+
+            env.base_env.print_board_to_console(env.state)
+            winner_id = mcGame(env, obs, config)
+            winner += winner_id
+            temp_scores = eval_end_pos(env)
+            end_board_scores[0] += [temp_scores[0]]
+            end_board_scores[1] += [temp_scores[1]]
+        print(np.shape(end_board_scores))
+        comeback_score = winner + (end_board_scores[0][0] - end_board_scores[1][0]) + (end_board_scores[0][1] - end_board_scores[1][1])
+        print(winner, end_board_scores)
+        print(comeback_score)
+        
+
+
     if(player1 != "human" and player2 == "human"):
-        temp = pve(1)
+        temp = pve(1, env)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
             score[1] += 1
         return score
     elif(player1 == "human" and player2 != "human"):
-        temp = pve(-1)
+        temp = pve(-1, env)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
             score[1] += 1
     elif(player1 == "human" and player2 == "human"):
-        temp = pvp()
+        temp = pvp(env)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
             score[1] += 1
     else:
-        temp = mcGame()
+        temp = mcGame(env, obs, config)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
@@ -66,7 +111,7 @@ def startGame(player1, player2, nrOfGames, comeback, score=[0,0]):
     ## If comeback is active calculate the starting difference.
     startingDifference = 0.0
     if comeback:
-        # Function by Luuk
+        
         pass
     ## With the difference setup the playing screens for the players
     startGame(player1, player2, nrOfGames, comeback, playGame(player1, player2, score, startingDifference))
