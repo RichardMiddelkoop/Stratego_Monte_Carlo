@@ -9,7 +9,7 @@ from evaluate_board import eval_end_pos
 import numpy as np
 
 # TODO make an actual function which plays the games.
-def playGame(player1, player2, score, startingDifference):
+def playGame(player1, player2, score, startingDifference, comeback):
     config = {
         'version': GameVersions.STANDARD,
         'random_player_assignment': False,
@@ -26,51 +26,50 @@ def playGame(player1, player2, score, startingDifference):
         config['human_web_gui_port'] = 7000
     best_env = StrategoMultiAgentEnv(env_config=config)
     best_obs = best_env.reset()
+    if(comeback):
+        closest_score = -9999999
+        best_env = None
+        best_obs = None
+        print("Creating boards for comeback score, this may take a while...")
+        for i in range(5):
+            print(f"Calculating {i+1} out of 5")
+            env = StrategoMultiAgentEnv(env_config=config)
+            obs = env.reset()
+            save_env = deepcopy(env)
+            save_obs = deepcopy(obs)
+            end_board_scores = [[0],[0]]
+            avg_games = 2
+            winner = 0
+            for i in range(avg_games):
+                print(f"Sub calculating {i+1} out of {avg_games}")
+                env = deepcopy(save_env)
+                # env.base_env.print_board_to_console(env.state)
+                # obs = env.reset()
 
-    # closest_score = -9999999
-    # best_env = None
-    # best_obs = None
-    # print("Creating boards for comeback score, this may take a while...")
-    # for i in range(5):
-    #     print(f"Calculating {i+1} out of 5")
-    #     env = StrategoMultiAgentEnv(env_config=config)
-    #     obs = env.reset()
-    #     save_env = deepcopy(env)
-    #     save_obs = deepcopy(obs)
-    #     end_board_scores = [[0],[0]]
-    #     avg_games = 2
-    #     winner = 0
-    #     for i in range(avg_games):
-    #         print(f"Sub calculating {i+1} out of {avg_games}")
-    #         env = deepcopy(save_env)
-    #         # env.base_env.print_board_to_console(env.state)
-    #         # obs = env.reset()
+                # env.base_env.print_board_to_console(env.state)
+                # obs = deepcopy(save_obs)
 
-    #         # env.base_env.print_board_to_console(env.state)
-    #         # obs = deepcopy(save_obs)
-
-    #         # env.base_env.print_board_to_console(env.state)
-    #         winner_id = mcGame(env, obs, config)
-    #         winner += winner_id
-    #         temp_scores = eval_end_pos(env)
-    #         end_board_scores[0] += [temp_scores[0]]
-    #         end_board_scores[1] += [temp_scores[1]]
-    #     print(np.shape(end_board_scores))
-    #     comeback_score = winner + (end_board_scores[0][0] - end_board_scores[1][0]) + (end_board_scores[0][1] - end_board_scores[1][1])
-    #     print(winner, end_board_scores)
-    #     print(comeback_score)
-    #     if(abs(startingDifference-comeback_score) < abs(startingDifference-closest_score)):
-    #         closest_score = comeback_score
-    #         best_env = deepcopy(save_env)
-    #         best_obs = deepcopy(save_obs)
-
+                # env.base_env.print_board_to_console(env.state)
+                winner_id = mcGame(env, obs, config)
+                winner += winner_id
+                temp_scores = eval_end_pos(env)
+                end_board_scores[0] += [temp_scores[0]]
+                end_board_scores[1] += [temp_scores[1]]
+            print(np.shape(end_board_scores))
+            comeback_score = winner + (end_board_scores[0][0] - end_board_scores[1][0]) + (end_board_scores[0][1] - end_board_scores[1][1])
+            print(winner, end_board_scores)
+            print(comeback_score)
+            if(abs(startingDifference-comeback_score) < abs(startingDifference-closest_score)):
+                closest_score = comeback_score
+                best_env = deepcopy(save_env)
+                best_obs = deepcopy(save_obs)
+    temp = 0
     if(player1 != "human" and player2 == "human"):
         temp = pve(1, best_env, config, best_obs)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
             score[1] += 1
-        return score
     elif(player1 == "human" and player2 != "human"):
         temp = pve(-1, best_env, config, best_obs)
         if(temp == 1):
@@ -89,8 +88,13 @@ def playGame(player1, player2, score, startingDifference):
             score[0] += 1
         elif(temp == -1):
             score[1] += 1
+    eval = eval_end_pos(best_env)
+    end_score = eval[0]-eval[1]
+    end_score = end_score + score[0]-score[1] + temp
+    if(comeback):
+        startingDifference = startingDifference+end_score
 
-    return score
+    return score, startingDifference
 
 def startGame(player1, player2, nrOfGames, comeback, score=[0,0]):
     
@@ -123,11 +127,13 @@ def startGame(player1, player2, nrOfGames, comeback, score=[0,0]):
     # Starting a new game
     ## If comeback is active calculate the starting difference.
     startingDifference = 0.0
-    if comeback:
+    # if comeback:
         
-        pass
+    #     pass
     ## With the difference setup the playing screens for the players
-    startGame(player1, player2, nrOfGames, comeback, playGame(player1, player2, score, startingDifference))
+    score, startingDifference = playGame(player1, player2, score, startingDifference, comeback)
+    print(startingDifference)
+    startGame(player1, player2, nrOfGames, comeback, score)
 
 
 
