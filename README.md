@@ -1,1 +1,2 @@
 # Stratego_Monte_Carlo
+To run the algorithm execute player_env.py using the command "python3 player_env.py". There is a parses for all possible options you can do. We recommend running an enemy versus enemy game since getting stratego to work in your browser is quite difficult. An example of a command with all instructions for enemy versus enemy game is "python3 player_env.py -M eve -B easy -N bo3 -C"
