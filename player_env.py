@@ -37,7 +37,7 @@ def playGame(player1, player2, score, startingDifference, comeback):
             obs = env.reset()
             save_env = deepcopy(env)
             save_obs = deepcopy(obs)
-            end_board_scores = [[0],[0]]
+            end_board_scores = [[], []]
             avg_games = 2
             winner = 0
             for i in range(avg_games):
