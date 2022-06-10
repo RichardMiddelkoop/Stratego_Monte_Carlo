@@ -134,7 +134,7 @@ def eval_end_pos(env):
     player_state = env.base_env.get_state_from_player_perspective(env.state, player_id)
     opp_state = env.base_env.get_state_from_player_perspective(env.state, -player_id)
 
-    env.base_env.print_board_to_console(env.state)
+    # env.base_env.print_board_to_console(env.state)
     scores = [calc_score(player_state), calc_score(opp_state)]
     if(scores[0] > scores[1]):
         scores[1] = scores[1]/scores[0]

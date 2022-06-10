@@ -13,13 +13,13 @@ add &po=False to see -all- board pieces
 (e.g. http://localhost:7000?player=1&po=False )
 """
 
-def pvp():
+def pvp(env):
 
     version = GameVersions.STANDARD
     version_config = VERSION_CONFIGS[version]
 
-    base_env = StrategoProceduralEnv(version_config['rows'], version_config['columns'])
-
+    # base_env = StrategoProceduralEnv(version_config['rows'], version_config['columns'])
+    base_env = env.base_env
     port = 7000
     s = StrategoHumanGUIServer(base_env=base_env, port=port)
 

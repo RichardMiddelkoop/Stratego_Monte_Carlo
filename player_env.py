@@ -1,4 +1,5 @@
 import argparse
+from copy import deepcopy
 from math import inf
 from pve import pve
 from pvp_2 import pvp
@@ -15,63 +16,74 @@ def playGame(player1, player2, score, startingDifference):
         'human_inits': True,
         'observation_mode': ObservationModes.PARTIALLY_OBSERVABLE,
     }
-    
 
-    closest_score = -inf
-    best_env = None
-    print("Creating boards for comeback score, this may take a while...")
-    for i in range(5):
-        print(f"Calculating {i} out of 5")
-        env = StrategoMultiAgentEnv(env_config=config)
-        obs = env.reset()
-        save_env = env
-        save_obs = obs
-        end_board_scores = [[0],[0]]
-        avg_games = 2
-        winner = 0
-        for i in range(avg_games):
-            
-            env = save_env
-            env.base_env.print_board_to_console(env.state)
-            # obs = env.reset()
+    config = {
+        'version': GameVersions.STANDARD,
+        'random_player_assignment': False,
+        'human_inits': True,
+        'observation_mode': ObservationModes.PARTIALLY_OBSERVABLE,        
+    }
+    best_env = StrategoMultiAgentEnv(env_config=config)
+    best_obs = best_env.reset()
 
-            env.base_env.print_board_to_console(env.state)
-            obs = save_obs
+    # closest_score = -9999999
+    # best_env = None
+    # best_obs = None
+    # print("Creating boards for comeback score, this may take a while...")
+    # for i in range(5):
+    #     print(f"Calculating {i+1} out of 5")
+    #     env = StrategoMultiAgentEnv(env_config=config)
+    #     obs = env.reset()
+    #     save_env = deepcopy(env)
+    #     save_obs = deepcopy(obs)
+    #     end_board_scores = [[0],[0]]
+    #     avg_games = 2
+    #     winner = 0
+    #     for i in range(avg_games):
+    #         print(f"Sub calculating {i+1} out of {avg_games}")
+    #         env = deepcopy(save_env)
+    #         # env.base_env.print_board_to_console(env.state)
+    #         # obs = env.reset()
 
-            env.base_env.print_board_to_console(env.state)
-            winner_id = mcGame(env, obs, config)
-            winner += winner_id
-            temp_scores = eval_end_pos(env)
-            end_board_scores[0] += [temp_scores[0]]
-            end_board_scores[1] += [temp_scores[1]]
-        print(np.shape(end_board_scores))
-        comeback_score = winner + (end_board_scores[0][0] - end_board_scores[1][0]) + (end_board_scores[0][1] - end_board_scores[1][1])
-        print(winner, end_board_scores)
-        print(comeback_score)
-        
+    #         # env.base_env.print_board_to_console(env.state)
+    #         # obs = deepcopy(save_obs)
 
+    #         # env.base_env.print_board_to_console(env.state)
+    #         winner_id = mcGame(env, obs, config)
+    #         winner += winner_id
+    #         temp_scores = eval_end_pos(env)
+    #         end_board_scores[0] += [temp_scores[0]]
+    #         end_board_scores[1] += [temp_scores[1]]
+    #     print(np.shape(end_board_scores))
+    #     comeback_score = winner + (end_board_scores[0][0] - end_board_scores[1][0]) + (end_board_scores[0][1] - end_board_scores[1][1])
+    #     print(winner, end_board_scores)
+    #     print(comeback_score)
+    #     if(abs(startingDifference-comeback_score) < abs(startingDifference-closest_score)):
+    #         closest_score = comeback_score
+    #         best_env = deepcopy(save_env)
+    #         best_obs = deepcopy(save_obs)
 
     if(player1 != "human" and player2 == "human"):
-        temp = pve(1, env)
+        temp = pve(1, best_env, config, best_obs)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
             score[1] += 1
         return score
     elif(player1 == "human" and player2 != "human"):
-        temp = pve(-1, env)
+        temp = pve(-1, best_env, config, best_obs)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
             score[1] += 1
     elif(player1 == "human" and player2 == "human"):
-        temp = pvp(env)
+        temp = pvp(best_env)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
             score[1] += 1
     else:
-        temp = mcGame(env, obs, config)
+        temp = mcGame(best_env, best_obs, config)
         if(temp == 1):
             score[0] += 1
         elif(temp == -1):
@@ -135,9 +147,10 @@ if __name__ == '__main__':
         test = input("Enter pvp or pve or eve: ")
 
     if test == "pve":
-        while not (player2 == "hardBot" or player2 == "easyBot"): 
-            print("Against what bot would you like to play?")
-            player2 = input("Enter hard or easy: ") + "Bot"
+        # while not (player2 == "hardBot" or player2 == "easyBot"): 
+        #     print("Against what bot would you like to play?")
+        #     player2 = input("Enter hard or easy: ") + "Bot"
+        player2 = "easyBot"
     elif test == "eve":
         player1 = "easyBot"
         player2 = "easyBot"
