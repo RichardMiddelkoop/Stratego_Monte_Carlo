@@ -4,26 +4,27 @@ from stratego_env import StrategoMultiAgentEnv, ObservationModes, GameVersions
 
 
 
-def pve(human_player_num, env, config, obs):
+def pve(human_player_num_, env, config, obs):
 
-    config['vs_human'] = True
-    config['human_player_num'] = human_player_num
-    config['human_web_gui_port'] = 7000
-    print(config)
+    # config['vs_human'] = True
+    # config['human_player_num'] = 1
+    # config['human_web_gui_port'] = 7000
+
+
+    # env = StrategoMultiAgentEnv(env_config=config)
 
     print(
         f"Visit \nhttp://localhost:{config['human_web_gui_port']}?player={config['human_player_num']} on a web browser")
     env_agent_player_num = config['human_player_num'] * -1
-    # sleep(5000)
+
     number_of_games = 1
     for _ in range(number_of_games):
         print("New Game Started")
-        # obs = env.reset()
+        obs = env.reset()
         while True:
 
             assert len(obs.keys()) == 1
             current_player = list(obs.keys())[0]
-            print(current_player, env_agent_player_num)
             assert current_player == env_agent_player_num
 
             current_player_action = mcts_act(config, env, obs)

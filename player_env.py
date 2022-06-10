@@ -17,12 +17,13 @@ def playGame(player1, player2, score, startingDifference):
         'observation_mode': ObservationModes.PARTIALLY_OBSERVABLE,
     }
 
-    config = {
-        'version': GameVersions.STANDARD,
-        'random_player_assignment': False,
-        'human_inits': True,
-        'observation_mode': ObservationModes.PARTIALLY_OBSERVABLE,        
-    }
+    # Ugly if statement, sorry
+    if(player1 != "human" and player2 != "human"):
+        pass
+    else:
+        config['vs_human'] = True
+        config['human_player_num'] = 1
+        config['human_web_gui_port'] = 7000
     best_env = StrategoMultiAgentEnv(env_config=config)
     best_obs = best_env.reset()
 
@@ -150,11 +151,13 @@ if __name__ == '__main__':
         # while not (player2 == "hardBot" or player2 == "easyBot"): 
         #     print("Against what bot would you like to play?")
         #     player2 = input("Enter hard or easy: ") + "Bot"
+        player1 = "human"
         player2 = "easyBot"
     elif test == "eve":
         player1 = "easyBot"
         player2 = "easyBot"
     else:
+        player1 = "human"
         player2 = "human"
 
     while not (nrofgames == "bo3" or nrofgames == "bo5" or nrofgames == "freeplay"):
@@ -174,5 +177,5 @@ if __name__ == '__main__':
     ## player2 = "human" if "pve" else "hardBot" or "easyBot"
     ## nrOfGames: nr of rounds to be played
     ## useComeback: whenether the comeback mechanic is active or not
-    player1 = "hardBot" if args.testing else "human" 
+    # player1 = "hardBot" if args.testing else "human" 
     startGame(player1, player2, nrofgames, useComeback)

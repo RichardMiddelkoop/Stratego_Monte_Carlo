@@ -14,7 +14,7 @@ def mcGame(env, obs, config):
     print("New Game Started")
     
     # env.base_env.print_board_to_console(env.state)
-    save_state(env.state, "start_test.pickle")
+    # save_state(env.state, "start_test.pickle")
     while True:
         assert len(obs.keys()) == 1
         current_player = list(obs.keys())[0]
